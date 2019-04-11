@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+<link rel="stylesheet" href="style.css">
+  <title>Favorite Movies</title>
+  <style type="text/css">
+    button,
+    div,
+    form,
+    input {
+      margin: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Artist Search</h1>
+
+    <!-- Rendered artists buttons will be placed here  -->
+    <div id="buttons-view"></div>
+
+    <form id="artist-form">
+      <label for="artist-input">Add an Artist</label>
+      <input type="text" id="artist-input"><br>
+
+      <!-- Button triggers new movie to be added -->
+      <input id="add-artist" type="submit" value="Submit Artist">
+    </form>
+
+    <!-- Artist gifs will be placed here -->
+    <div id="artists-view"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+      // Initial array of artists
+      var artists = ["Nas", "Jay-Z", "Biggie", "Nipsey Hussle"];
+
+      // displayArtistGif function re-renders the HTML to display the appropriate content
+      function displayArtistGif() {
+
+        var artist = $(this).attr("data-name");
+        var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        artist + "&api_key=RZAQGwCbKrcD26igB5ZuYGBH1uoqRTkS&limit=10";
+
+        console.log(artist);
+
+        // Creates AJAX call for the specific artist button being clicked
+        $.ajax({
+          url: queryURL,
+          method: "GET"
+        })
+        
+        .then(function(response) {
+          console.log(response);
+
+          var results = response.data;
+
+          // Looping through each result item
+          for (var i = 0; i < results.length; i++) {
+
+          // Creates a div to hold the artist
+          var artistDiv = $("<div>");
+            // <div></div>
+
+          // Creates an element to hold the gif
+          // Appends the image
+          var artistImage = $("<img>");
+          artistImage.attr("src", results[i].images.fixed_height.url);
+          
+          artistImage.appendTo(artistDiv);
+
+          // Puts the Artist gifs above the previous gifs.
+          $("#artists-view").prepend(artistDiv);
+          }
+        });
+
+      }
+
+      // Function for displaying artist data
+      function renderButtons() {
+
+        // Deletes the artists prior to adding new artists
+        // (this is necessary otherwise you will have repeat buttons)
+        $("#buttons-view").empty();
+        // Loops through the array of artists
+        for (var i = 0; i < artists.length; i++) {
+
+          // Then dynamicaly generates buttons for each artist in the array
+          // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
+          var a = $("<button>");
+          // Adds a class of artist to our button
+          a.addClass("artist");
+          // Added a data-attribute
+          a.attr("data-name", artists[i]);
+          // Provided the initial button text
+          a.text(artists[i]);
+          // Added the button to the buttons-view div
+          $("#buttons-view").append(a);
+        }
+      }
+
+      // This function handles events where the submit artist button is clicked
+      $("#add-artist").on("click", function(event) {
+        event.preventDefault();
+        // This line of code will grab the input from the textbox
+        var artist = $("#artist-input").val().trim();
+
+        // The artist from the textbox is then added to our array
+        artists.push(artist);
+
+        // Calling renderButtons which handles the processing of our artist array
+        renderButtons();
+      });
+
+      // Adding click event listeners to all elements with a class of "artist"
+      $(document).on("click", ".artist", displayArtistGif);
+
+      console.log(displayArtistGif);
+      // Calling the renderButtons function to display the intial buttons
+      renderButtons();
+    </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
