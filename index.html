@@ -72,10 +72,16 @@
           // Creates an element to hold the gif
           // Appends the image
           var artistImage = $("<img>");
-          artistImage.attr("src", results[i].images.fixed_height.url);
-          
-          artistImage.appendTo(artistDiv);
 
+          artistImage.attr("src", results[i].images.fixed_height_still.url);
+          artistImage.attr("data-still", results[i].images.fixed_height_still.url);
+          artistImage.attr("data-animate", results[i].images.fixed_height.url);
+          artistImage.attr("data-state", "still");
+          artistImage.addClass("gif");
+
+          artistImage.appendTo(artistDiv);        
+
+          
           // Puts the Artist gifs above the previous gifs.
           $("#artists-view").prepend(artistDiv);
           }
@@ -125,6 +131,38 @@
       console.log(displayArtistGif);
       // Calling the renderButtons function to display the intial buttons
       renderButtons();
+
+      $(document).on("click", ".gif", function() {
+      
+      // retrieve current state of our image
+      var state = $(this).attr("data-state");
+
+      console.log(state);
+
+      // if state variable === "still", animate the image
+      if (state === "still") {
+        // retrieve value of animated image from attribute
+        var animatedGif = $(this).attr("data-animate");
+        // set "src" attribute of image to the value of animated
+        $(this).attr("src", animatedGif);
+        // set data-state to reflect that image is animated
+        $(this).attr("data-state", "animated");
+      }
+      // else, make the image still
+      else {
+        // retrieve value of still image
+        var stillGif = $(this).attr("data-still");
+        // set "src" attribute to still image
+        $(this).attr("src", stillGif);
+        // set data-state to reflect that image is still
+        $(this).attr("data-state", "still");
+      }
+
+      console.log(state, animatedGif, stillGif);
+      
+
+    });
+
     </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
